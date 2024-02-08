@@ -6,8 +6,8 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 import Axios from 'axios';
 
-// import { PicturesAPI } from "./js/imagesAPI";
-// const pictureAPI = new PicturesAPI();
+import { PicturesAPI } from "./js/picturesAPI";
+const pictureAPI = new PicturesAPI();
 
 const formEl = document.querySelector('.form-search');
 const imgContainer = document.querySelector('.gallery');
@@ -15,20 +15,6 @@ const loaderContainer = document.querySelector('.loader-container');
 
 // Ховаємо лоадер
 loaderContainer.style.display = 'none';
-
-// Запит на сервер pixabay для отримання картинок
-async function getPictures(searchText) {
-   const BASE_URL = 'https://pixabay.com/api';
-    const API_KEY = '/?key=42190673-143cbde4cd6a94de75e31d0a4';
-    const SEARCH_PARAMS = `&q=${searchText}`;
-    const PARAMS = '&image_type=photo&orientation=horizontal&safesearch=true';
-    
-    const url = BASE_URL + API_KEY + SEARCH_PARAMS + PARAMS; 
-
-    const response = await Axios.get(url);
-    console.log('Запит на сервер', response.data);
-    return response.data;
-}
 
 formEl.addEventListener('submit', onFormSubmit);
 
@@ -43,11 +29,10 @@ async function onFormSubmit(e) {
     imgContainer.innerHTML = '';
     loaderContainer.style.display = 'flex';
 
-// Викликаєм функцію звернення на сервер, Створюємо галерею
-    const {total, hits} = await getPictures(query);
-    console.log('onFormSubmit', total, hits);
-
-// перевірка, що картинки знайдені
+    // Викликаєм функцію звернення на сервер, Створюємо галерею
+    const { total, hits } = await pictureAPI.getPictures(query);
+   
+    // перевірка, що картинки знайдені
     if (total === 0) {
         errorShow();
              // очищуємо форму, ховаємо лоадер
@@ -56,20 +41,21 @@ async function onFormSubmit(e) {
         return;
     }
 
-    const markup = hits.map(imgTemplate).join('');
-    imgContainer.innerHTML = markup;
+    renderPictures(hits);
 
-     // модульне вікно з бібліотеки   
+    // модульне вікно з бібліотеки   
     let gallery = new SimpleLightbox('.gallery a', { captionDelay: 250, captionsData: 'alt', showCounter: false });
+    
+    // очищуємо галерею, форму, ховаємо лоадер
     gallery.refresh();
-
-     // очищуємо форму, ховаємо лоадер
     formEl.reset();
     loaderContainer.style.display = 'none';
 }
 
 
-// Формуємо посилання на картинку з інформацією про неї
+// ******************************************
+
+// Розмітка для 1 картинки
 function imgTemplate({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) {
   return ` 
   <a href="${largeImageURL}" class="gallery-link">
@@ -84,6 +70,17 @@ function imgTemplate({webformatURL, largeImageURL, tags, likes, views, comments,
   </figure>
 </a >`
     }
+
+// Розмітка для масиву
+function imagesTemplate(aray) {
+  return aray.map(imgTemplate).join('');
+}
+
+// Рендеримо галерею
+function renderPictures(aray) {
+    const markup = imagesTemplate(aray);
+    imgContainer.innerHTML = markup;
+}
 
 // спливаюче вікно про помилку бібліотеки iziToast
 function errorShow() {
