@@ -20,7 +20,7 @@ formEl.addEventListener('submit', onFormSubmit);
 
 async function onFormSubmit(e) {
     e.preventDefault();
-    const query = e.target.elements.text.value;
+    const query = e.target.elements.text.value.trim();
         if (query === '') {
         return
     };
