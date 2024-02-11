@@ -62,7 +62,7 @@ body {
   font-size: 20px;
   line-height: 2;
   letter-spacing: 0.04em;
-  color: black;
+  color: blue;
 
   background-color: #fff94cab;
   border-radius: 4px;
@@ -87,9 +87,8 @@ body {
 }
 
 /************ Кнопка ******************/
-.form-btn {
+.btn {
   display: block;
-  width: 75px;
   height: 35px;
   font-size: 17px;
   font-weight: 500;
@@ -106,13 +105,23 @@ body {
   transition: 500ms;
 }
 
-.form-btn:hover {
+.btn:hover {
   background-position: right;
 }
 
-.form-btn:active {
+.btn:active {
   box-shadow: 0px 2px #bcbba3;
   transform: translate(0, 4px);
+}
+
+.form-btn {
+   width: 75px;
+}
+
+.load-btn {
+   width: 200px;
+   margin: 0 auto;
+ margin-top: 10px;
 }
 
 /************* Gallery ***************/
@@ -190,8 +199,8 @@ figure {
 }
 
 .loader {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border: 5px dotted #4444d9;
   border-radius: 50%;
   display: inline-block;

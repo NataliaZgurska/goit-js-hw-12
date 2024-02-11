@@ -6,22 +6,29 @@ import 'izitoast/dist/css/iziToast.min.css';
 
 import Axios from 'axios';
 
-import { PicturesAPI } from "./js/picturesAPI";
+import { renderPictures, imgTemplate } from "./js/render_functions";
+
+import { PicturesAPI } from "./js/pixabay_api";
 const pictureAPI = new PicturesAPI();
 
 const formEl = document.querySelector('.form-search');
 const imgContainer = document.querySelector('.gallery');
 const loaderContainer = document.querySelector('.loader-container');
+const loadBtn = document.querySelector('.js-load-btn')
 
-// Ховаємо лоадер
+// Ховаємо лоадер і кнопку load more
 loaderContainer.style.display = 'none';
+loadBtn.style.display = 'none';
 
 formEl.addEventListener('submit', onFormSubmit);
+
+let currentPage = 1;
 
 async function onFormSubmit(e) {
     e.preventDefault();
     const query = e.target.elements.text.value.trim();
-        if (query === '') {
+  if (query === '') {
+        imgContainer.innerHTML = '';
         return
     };
 
@@ -30,10 +37,10 @@ async function onFormSubmit(e) {
     loaderContainer.style.display = 'flex';
 
     // Викликаєм функцію звернення на сервер, Створюємо галерею
-    const { total, hits } = await pictureAPI.getPictures(query);
+    const { total, hits } = await pictureAPI.getPictures(query, currentPage);
    
     // перевірка, що картинки знайдені
-    if (total === 0) {
+      if (hits.length === 0) {
         errorShow();
              // очищуємо форму, ховаємо лоадер
             formEl.reset();
@@ -41,47 +48,32 @@ async function onFormSubmit(e) {
         return;
     }
 
-    renderPictures(hits);
+    imgContainer.innerHTML = renderPictures(hits);
 
     // модульне вікно з бібліотеки   
     let gallery = new SimpleLightbox('.gallery a', { captionDelay: 250, captionsData: 'alt', showCounter: false });
     
-    // очищуємо галерею, форму, ховаємо лоадер
-    gallery.refresh();
+    // очищуємо форму, ховаємо лоадер, викликаємо кнопку load more
+    // gallery.refresh();
     formEl.reset();
-    loaderContainer.style.display = 'none';
+  loaderContainer.style.display = 'none';
+  loadBtn.style.display = 'block';
+}
+
+loadBtn.addEventListener('submit', loadMore)
+
+function loadMore(e) {
+  e.preventDefault();
+  currentPage += 1;
+  // Викликаємо лоадер і ховаємо кнопку load more
+  // loaderContainer.style.display = 'flex';
+  // loadBtn.style.display = 'none';
+
+console.log('hello');
 }
 
 
 // ******************************************
-
-// Розмітка для 1 картинки
-function imgTemplate({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) {
-  return ` 
-  <a href="${largeImageURL}" class="gallery-link">
-     <figure>
-      <img src="${webformatURL}" alt="${tags}" class="gallery-image">
-      <figcaption class="gallery-figcaption">
-        <div class="image-item">Likes <span class="image-elem">${likes}</span></div>
-        <div class="image-item">Views <span class="image-elem">${views}</span></div>
-        <div class="image-item">Comments <span class="image-elem">${comments}</span></div>
-        <div class="image-item">Downloads <span class="image-elem">${downloads}</span></div>
-  </figcaption>
-  </figure>
-</a >`
-    }
-
-// Розмітка для масиву
-function imagesTemplate(aray) {
-  return aray.map(imgTemplate).join('');
-}
-
-// Рендеримо галерею
-function renderPictures(aray) {
-    const markup = imagesTemplate(aray);
-    imgContainer.innerHTML = markup;
-}
-
 // спливаюче вікно про помилку бібліотеки iziToast
 function errorShow() {
               iziToast.show({
