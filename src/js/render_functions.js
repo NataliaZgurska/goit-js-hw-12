@@ -1,4 +1,5 @@
-// Розмітка для 1 картинки
+import refs from "./refs";
+
 export function imgTemplate({webformatURL, largeImageURL, tags, likes, views, comments, downloads}) {
   return ` 
   <a href="${largeImageURL}" class="gallery-link">
@@ -15,8 +16,7 @@ export function imgTemplate({webformatURL, largeImageURL, tags, likes, views, co
     }
 
 
-// Рендеримо галерею
 export function renderPictures(aray) {
     const markup = aray.map(imgTemplate).join('');
-    return markup;
+    refs.imgContainer.insertAdjacentHTML('beforeend', markup)
 }
