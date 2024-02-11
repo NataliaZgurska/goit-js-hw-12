@@ -18,7 +18,7 @@ const loadBtn = document.querySelector('.js-load-btn')
 
 // Ховаємо лоадер і кнопку load more
 loaderContainer.style.display = 'none';
-loadBtn.style.display = 'none';
+// loadBtn.style.display = 'none';
 
 formEl.addEventListener('submit', onFormSubmit);
 
