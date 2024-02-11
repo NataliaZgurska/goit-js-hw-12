@@ -13,7 +13,6 @@ export class PicturesAPI {
         const url = `${BASE_URL}${API_KEY}${SEARCH_PARAMS}${PARAMS}${per_page}${PAGE}${page_number}`
 
         const response = await axios.get(url);
-        console.log('Запит на сервер', searchText, page_number, response.data);
         return response.data;
     }
 
