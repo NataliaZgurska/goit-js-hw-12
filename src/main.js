@@ -16,6 +16,7 @@ const pictureAPI = new PicturesAPI();
 let currentPage;
 const PER_PAGE = 15;
 let query = '';
+let gallery;
 
 formEl.addEventListener('submit', onFormSubmit);
 async function onFormSubmit(e) {
@@ -41,7 +42,7 @@ async function onFormSubmit(e) {
   
   renderPictures(hits);
   // модульне вікно з бібліотеки   
-  let gallery = new SimpleLightbox('.gallery a', { captionDelay: 250, captionsData: 'alt', showCounter: false });
+  gallery = new SimpleLightbox('.gallery a', { captionDelay: 250, captionsData: 'alt', showCounter: false });
     
   formEl.reset();
   hideLoader();
@@ -57,6 +58,7 @@ async function loadMore() {
   const { totalHits, hits } = await pictureAPI.getPictures(query, currentPage, PER_PAGE);
   renderPictures(hits);
   
+  gallery.refresh();
   hideLoader();
   isLastPage(totalHits);
 
